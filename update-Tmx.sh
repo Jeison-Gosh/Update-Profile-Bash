@@ -18,10 +18,10 @@ ETC=$PREFIX/etc
 NAME_CURRENT_FILE="update-Tmx.sh"
 
 trap ctrl_c 2
- ctrl_c() {
+ctrl_c() {
 	co=$(($co + 1))
 	printf "$re#--Oops! [$co-3]$be\n"
-	if [ $co == 3 ]; then
+	if [ $co == 3 ]; then # Check if press tree times ctrl_c
 		sleep 1
 		echo $(clear)
 		printf "$re[!] An error has been found.\n"
@@ -61,8 +61,8 @@ else
 	printf "$re.$bo\n\n"
 	exit 0
 fi
-#menu principal
-menu() {
+#menu_main principal
+menu_main() {
 
 	echo $(clear)
 	bannerD0
@@ -100,29 +100,29 @@ menu() {
 			update
 			;;
 		02)
-			sqlmap
+			install_sqlmap
 			;;
 		03)
-			metasploit
+			install_metasploit
 			;;
 		04)
-			sudoPkg
+			install_sudo_pkg
 			;;
 		05)
 			kickthemout
 			;;
 		06)
-			aircrack
+			install_aircrack
 			;;
 		07)
 			keyboard_mod	
 			;;
 
 		08)     
-			choosebash
+			choose_bash_config
 			;;
 		09)
-			dellthum
+			menu_dellthum
 			;;
 
 		*)
@@ -166,13 +166,13 @@ updateRP() {
 			pkg install macchanger -y
 			pkg update && pkg upgrade -y
 			sleep 1
-			menu
+			menu_main
 			;;
 		no)
 			printf "$bo\n"
 			pkg update && pkg upgrade -y
 			sleep 2
-			menu
+			menu_main
 			;;
 		*)
 			show_error1rp
@@ -183,7 +183,7 @@ updateRP() {
 
 #setup Dex-config
 
-configBash() {
+config_environment_by_default() {
 
 	echo $(clear)
 	if [ -e $PREFIX/etc/motd ]; then
@@ -228,15 +228,15 @@ configBash() {
 	printf "$ye[!] Press enter to continue.\n\n"
 	read -s enter
 		
-	menu
+	menu_main
 }
 
-dellthum(){
+menu_dellthum(){
 
 	echo $(clear)
 	printf "$gr{+}--Options:
 
-	$be[00]$ye Back to main menu  
+	$be[00]$ye Back to main menu_main  
 	$be[01]$ye Install deltumbnails
 	$be[02]$ye What is delthumbnails?
 	
@@ -245,10 +245,10 @@ dellthum(){
 	read -n 2 delop
 	case $delop in
 		00)
-			menu
+			menu_main
 			;;
 		01)
-			instdllth
+			delete_thumbnails
 			;;
 		02)
 			whtsdt
@@ -258,12 +258,12 @@ dellthum(){
 			;;
 
 	esac
-	menu
+	menu_main
 }
 
-#install dellthumbnails
+#delete thumbnails
 
-instdllth () {
+delete_thumbnails () {
 
 	echo $(clear)
 	#printf "$ye[!] Dellthumbnails has been installed."
@@ -277,18 +277,12 @@ instdllth () {
 		printf "$re[!] The thumbnails appears to have been removed.\n\n"
 		printf "$ye[!] Press enter to continue. "
 		read -s enter
-		
-
 	fi
-
-
-
-
 }
 
 #sudo
 
-sudoPkg () {
+install_sudo_pkg () {
 
 	echo $(clear)
 	printf "$gr#--Downloading sudo... $bo\n"
@@ -335,13 +329,13 @@ sudoPkg () {
 			;;
 
 	esac
-	menu
+	menu_main
 	
 }
 
 #sqlmap
 
-sqlmap (){
+install_sqlmap (){
 
 	echo $(clear)
 	printf "$gr#--wait to install sqlmap$bo\n"
@@ -349,12 +343,12 @@ sqlmap (){
 	sleep 2
 	python2 -m pip install --upgrade pip
 	python2 -m pip install sqlmap
-	menu
+	menu_main
 }
 
 #Aircrack
 
-aircrack () {
+install_aircrack () {
 
 	echo $(clear)
 	printf "$ye[!]-Instalando aircrack-ng...\n\n"
@@ -362,19 +356,19 @@ aircrack () {
 	pkg upgrade -y
 	pkg install aircrack-ng ethtool macchanger -y
 	sleep 2
-	menu
+	menu_main
 }
 
 
 #seleccion bash
 
-choosebash() {
+choose_bash_config() {
 
 	echo $(clear)
 	printf "\n\n"
 	printf "$gr{+}--Options:
 		
-	$be[00]$ye Back to main menu
+	$be[00]$ye Back to main menu_main
 	$be[01]$ye Config new bash
 	$be[02]$ye DexTro config\n
 	"
@@ -384,28 +378,19 @@ choosebash() {
 	case $Opconfigbash in
 
 		00)
-			menu
+			menu_main
 			;;
 		01)
 			config_bash
 			;;
 		02)
-			configBash
+			config_environment_by_default
 			;;
 		*)
 			show_error8
 			;;
 		esac
 	
-}
-
-#menu config bash
-
-menu_bash () {
-
-	echo "-h"
-
-
 }
 
 #Config bash
@@ -442,7 +427,7 @@ config_bash () {
 			printf "$re[!]$gr The config of bash haven't been configure"
 			printf "\n\n$ye[!] Press enter to continue.\n\n"
 			read -s enter
-			choosebash
+			choose_bash_config
 		;;
 	*)
 			show_error_8cb
@@ -452,7 +437,7 @@ config_bash () {
 
 #metasploit 
 
-metasploit () {
+install_metasploit () {
 
 	echo $(clear)
 	sleep 1
@@ -461,17 +446,7 @@ metasploit () {
 	pkg install unstable-repo
 	pkg install metasploit -y
 	sleep 3
-	menu
-}
-
-#variables
-
-variable() {
-
-	echo $(clear)
-	
-	menu
-
+	menu_main
 }
 
 #keyboard changue
@@ -483,7 +458,7 @@ keyboard_mod(){
 	printf "$ye[!] Press enter to continue. "
 	read -s enter
 	mkdir -p $HOME/.termux/&&echo "extra-keys = [['ESC','/','-','HOME','UP','END','PGUP'],['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]" > $HOME/.termux/termux.properties&&echo "$rst"
-	menu
+	menu_main
 
 }
 
@@ -505,7 +480,7 @@ kickthemout() {
 		cd $HOME/kickthemout
 		python -m pip install -r requirements.txt
 	fi
-	menu
+	menu_main
 
 	
 
@@ -518,7 +493,7 @@ show_error() {
 	printf "$re[•]--# You have chosen an invalid option #--[•]\n\n" 
 	printf "$ye[!] Press enter to continue. "
 	read -s enter
-	menu
+	menu_main
 }
 
 #show error case option 1 [root-pkg]
@@ -532,14 +507,14 @@ show_error1rp() {
 
 show_error4() {
 	show_error
-	sudoPkg
+	install_sudo_pkg
 }
 
 #show error case option 8
 
 show_error8() {
 	show_error
-	choosebash       
+	choose_bash_config       
 }
 
 #show error case option 8 [config_bash]
@@ -551,11 +526,11 @@ show_error_8cb() {
 
 }
 
-#show error case option 8 [dellthumbnails]
+#show error case option 8 [delete thumbnails]
 
 show_error_8dt() {
 	show_error
-	dellthum
+	menu_dellthum
 
 }	
 
@@ -605,4 +580,4 @@ ask_yesnot() {
 	printf "$bo\n >> "
 
 }
-menu
+menu_main
