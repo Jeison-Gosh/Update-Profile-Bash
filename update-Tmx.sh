@@ -1,50 +1,58 @@
 #!/bin/bash
 
+#CONSTANTS 
+
+FG_BLACK='\033[0;30m'
+FG_WHITE='\033[1;97m'
+FG_RED='\033[1;91m'
+FG_GREEN='\033[1;92m'
+FG_CYAN='\033[1;96m'
+FG_BLUE='\033[1;94m'
+FG_MAGENTA='\033[1;95m'
+FG_YELLOW='\033[1;93m'
+
 bse='\033[2;94m'
-bo='\033[1;97m'
-re='\033[1;91m'
-gr='\033[1;92m'
-be='\033[1;96m'
-bs='\033[1;94m'
-vi='\033[1;95m'
-ye='\033[1;93m'
 cu='\033[3;92m'
-var=$var
-co=0
+
 
 APT=apt
 PKG=pkg
 ETC=$PREFIX/etc
+LIMIT_EXIT_COUNTER=3
 NAME_CURRENT_FILE='update-Tmx.sh'
 NAME_WORK_DIRECTORY='TerminalUpdateBash'
+
+#VARIABLES
+exitcount=0
 
 water_mark_author(){
 	local sleeptime=${1:-3}  
 	sleep $sleeptime
 	echo $(clear)
-    printf "${ye}[!]${be}Script made by DexTr0\n\n ${ye}Script is closing now. Please wait\n\n"
-    printf "${ye}©This software is copyleft and licensed under the GNU Affero General Public License\n
-	${ye} For more information,\n visit https://www.gnu.org/licenses/agpl-3.0.html\n\n"
+    printf "${FG_RED}[!] Script made by DexTr0\n\n${FG_YELLOW}Script is closing now. Please wait.\n\n"
+    printf "${FG_YELLOW}© This software is copyleft and licensed under the GNU Affero General Public License.\nFor more information, visit "
+	printf 'https://www.gnu.org/licenses/agpl-3.0.html'
 	sleep 1
-    printf "${ye}."
+    printf "\n\n${FG_YELLOW}."
     sleep 1
-    printf "${ye}."
+    printf "${FG_YELLOW}."
     sleep 1
-    printf "${ye}.\n\n"
+    printf "${FG_YELLOW}.\n\n"
     sleep 1
 }
 
 trap ctrl_c 2
 ctrl_c() {
-	co=$(($co + 1))
-	printf "$re#--Oops! [$co-3]$be\n"
-	if [ $co == 3 ]; then # Check if press tree times ctrl_c
+	exitcount=$(($exitcount + 1))
+	if [[ $exitcount -le $LIMIT_EXIT_COUNTER ]]; then 
+		printf "$FG_RED#--Oops! [$exitcount-$LIMIT_EXIT_COUNTER]${FG_CYAN}\n"
+	fi 
+	if [ $exitcount == $LIMIT_EXIT_COUNTER ]; then 
 		sleep 1
 		echo $(clear)
-		printf "${re}[!] An error has been found.\n"
-		echo
+		printf "${FG_RED}[!] It's seems that you wan't close the script.\n\n"
 		sleep 1
-		printf "${ye}#The script has finished...\n"
+		printf "${FG_YELLOW}#The script has been stopped...\n"
 		water_mark_author 2
 		exit 0
 	fi
@@ -68,11 +76,11 @@ echo "Architecture: $ARCH"
 # Check that OS environment exists
 
 if [[ -z "$OS" ]]; then 
-	printf "${re}[!]${ye} OS var environment is not defined... Trying with var OSTYPE\n" 
+	printf "${FG_RED}[!]${FG_YELLOW} OS var environment is not defined... Trying with var OSTYPE\n" 
 fi 
 
 if [[ -z "$OSTYPE" ]]; then 
-	printf "${re}[!]${ye} OSTYPE var environment is not defined... Aborting\n"
+	printf "${FG_RED}[!]${FG_YELLOW} OSTYPE var environment is not defined... Aborting\n"
 	water_mark_author
 	exit 1 
 fi
@@ -87,19 +95,19 @@ if echo $OS | egrep -iq 'nux|ows' ; then
   	elif command -v pkg &>/dev/null; then
     	PACKAGE_MANAGER="pkg"
   	else
-		printf "${re}[!] Package manager not found."
+		printf "${FG_RED}[!] Package manager not found."
 		water_mark_author
 		exit 1
 	fi
 else
-	printf "${ye}¡Package Manager not supported for the SO!... Aborting\n" 
+	printf "${FG_YELLOW}¡Package Manager not supported for the SO!... Aborting\n" 
 	water_mark_author
 	exit 1
 fi
 
-printf "${re}[!]${gr}Chosen package manager: $PACKAGE_MANAGER"
+printf "${FG_RED}[!]${FG_GREEN}Chosen package manager: $PACKAGE_MANAGER"
 
-#check update is on home
+# Check update is on home
 
 if [ -e "$NAME_CURRENT_FILE" ]; then
 	if [ -e "$HOME/$NAME_WORK_DIRECTORY/$NAME_CURRENT_FILE" ]; then
@@ -117,7 +125,7 @@ elif [ -e "$HOME/storage/downloads/$NAME_WORK_DIRECTORY/$NAME_CURRENT_FILE" ]; t
 	chmod +x "$HOME/$NAME_CURRENT_FILE" 
 else 
 	echo $(clear)
-	printf "${ye}#Please move the *$NAME_CURRENT_FILE* file to home directory.\n\n"
+	printf "${FG_YELLOW}#Please move the *$NAME_CURRENT_FILE* file to home directory.\n\n"
 	water_mark_author 2
 	exit 0
 fi
@@ -128,21 +136,19 @@ menu_main() {
 
 	echo $(clear)
 	banner_d0
-	echo
-	echo
-	printf "$gr{+}--Options:
+	printf "\n\n${FG_GREEN}{+}--Options:
 	
-	$be[00]$ye Exit
-	$be[01]$ye Install tools
-	$be[02]$ye Install sqlmap
-	$be[03]$ye Install metasploit
-	$be[04]$ye Install sudo (root)
-	$be[05]$ye Install kickthemout
-	$be[06]$ye Install aircrack-ng (root)
-	$be[07]$ye Changue config keyboard
-	$be[08]$ye Changue config termux (home)\n
+	${FG_CYAN}[00]${FG_GREEN} Exit
+	${FG_CYAN}[01]${FG_GREEN} Install tools
+	${FG_CYAN}[02]${FG_GREEN} Install sqlmap
+	${FG_CYAN}[03]${FG_GREEN} Install metasploit
+	${FG_CYAN}[04]${FG_GREEN} Install sudo (root)
+	${FG_CYAN}[05]${FG_GREEN} Install kickthemout
+	${FG_CYAN}[06]${FG_GREEN} Install aircrack-ng (root)
+	${FG_CYAN}[07]${FG_GREEN} Changue config keyboard
+	${FG_CYAN}[08]${FG_GREEN} Changue config termux (home)\n
 	"
-	printf "$gr >>$be "
+	printf "${FG_GREEN} >>${FG_CYAN} "
 	read -n 2 op
 	case $op in
 
@@ -186,35 +192,35 @@ menu_main() {
 	esac
 }
 
-#packages to upgrade and install
+# packages to upgrade and install
 
 update() {
 
 	echo $(clear)
-	printf "$re[!]$be Searching the OS type to download tools..."
-	printf "$re[!]$gr--Loading packages...\n" 
+	printf "$FG_RED[!]${FG_CYAN} Searching the OS type to download tools..."
+	printf "$FG_RED[!]${FG_GREEN}--Loading packages...\n" 
 	sleep 2
 	cd $HOME
-	printf "$ye"
+	printf "${FG_YELLOW}"
 	pkg update && pkg upgrade -y
 	pkg install vim figlet git wget curl php python python2 perl nmap openssh unzip zip unrar hydra util-linux darkhttpd tor torsocks clang -y
 	updateRP
 }
 
-#packages to install [root]
+# packages to install [root]
 
 updateRP() {
 
 	echo $(clear)
-	printf "$be[#] Wanna you install root package? "
+	printf "${FG_CYAN}[#] Wanna you install root package? "
 	ask_yesnot
 	echo
 	read -n 3 anspack
 	case $anspack in
 		yes)
 			echo $(clear)
-			printf "$ye[!] installing root package.\n\n"
-			printf "$bo"
+			printf "${FG_YELLOW}[!] installing root package.\n\n"
+			printf "${FG_WHITE}"
 			sleep 2
 			pkg install root-repo -y
 			pkg install macchanger -y
@@ -223,7 +229,7 @@ updateRP() {
 			menu_main
 			;;
 		no)
-			printf "$bo\n"
+			printf "${FG_WHITE}\n"
 			pkg update && pkg upgrade -y
 			sleep 2
 			menu_main
@@ -235,7 +241,7 @@ updateRP() {
 	
 }
 
-#setup Dex-config
+# setup Dex-config
 
 config_environment_by_default() {
 
@@ -255,8 +261,8 @@ config_environment_by_default() {
 	echo "ye='\033[1;93m'" >> $ETC/bash.bashrc
 	echo "cu='\033[3;92m'" >> $ETC/bash.bashrc
 	echo "echo $(clear)" >> $ETC/bash.bashrc
-	echo "PS1='$ye#--DexTrø ≈ $re[$be \W$re ]$ye:$bo\n>> '" >> $ETC/bash.bashrc
-	echo "printf '$bs'" >> $ETC/bash.bashrc
+	echo "PS1='${FG_YELLOW}#--DexTrø ≈ $FG_RED[${FG_CYAN} \W$FG_RED ]${FG_YELLOW}:${FG_WHITE}\n>> '" >> $ETC/bash.bashrc
+	echo "printf '${FG_BLUE}'" >> $ETC/bash.bashrc
 	echo "figlet '       *Dextr0* '" >> $ETC/bash.bashrc
 	echo "echo " >> $ETC/bash.bashrc
 	echo "BIN=$PREFIX/bin" >> $ETC/bash.bashrc
@@ -273,26 +279,28 @@ config_environment_by_default() {
 	echo "LABD=$HOME/storage/shared/LabDTest" >> $ETC/bash.bashrc
 	echo "labd=/storage/emulated/0/LabDTest" >> $ETC/bash.bashrc
 	if [ -e /storage/emulated/0/LabDTest ]; then
-		printf "$re[!]$gr Alread exists the directory (LabDTest).\n\n"
+		printf "$FG_RED[!]${FG_GREEN} Alread exists the directory (LabDTest).\n\n"
 	else
 		mkdir /storage/emulated/0/LabDTest
-		printf "$be#--Has been made (LabDTest) directory.\n\n"
+		printf "${FG_CYAN}#--Has been made (LabDTest) directory.\n\n"
 	fi
 	read_enter	
 	menu_main
 }
 
+# Menu dell thumb
+
 menu_dellthum(){
 
 	echo $(clear)
-	printf "$gr{+}--Options:
+	printf "${FG_GREEN}{+}--Options:
 
-	$be[00]$ye Back to main menu_main  
-	$be[01]$ye Install deltumbnails
-	$be[02]$ye What is delthumbnails?
+	${FG_CYAN}[00]${FG_YELLOW} Back to main menu_main  
+	${FG_CYAN}[01]${FG_YELLOW} Install deltumbnails
+	${FG_CYAN}[02]${FG_YELLOW} What is delthumbnails?
 	
 	"
-	printf "$gr >>$be "
+	printf "${FG_GREEN} >>${FG_CYAN} "
 	read -n 2 delop
 	case $delop in
 		00)
@@ -317,14 +325,14 @@ menu_dellthum(){
 delete_thumbnails () {
 
 	echo $(clear)
-	#printf "$ye[!] Dellthumbnails has been installed."
+	#printf "${FG_YELLOW}[!] Dellthumbnails has been installed."
 	cd /storage/emulated/0/DCIM
 	if [ -d .thumbnails ]; then
 		rm -rf .thumbnails/
-		printf "$be#Thumbnails directory has been removed.\n\n"
+		printf "${FG_CYAN}#Thumbnails directory has been removed.\n\n"
 		read_enter
 	else
-		printf "$re[!] The thumbnails appears to have been removed.\n\n"
+		printf "$FG_RED[!] The thumbnails appears to have been removed.\n\n"
 		read_enter
 	fi
 }
@@ -334,7 +342,7 @@ delete_thumbnails () {
 install_sudo_pkg () {
 
 	echo $(clear)
-	printf "$gr#--Downloading sudo... $bo\n"
+	printf "${FG_GREEN}#--Downloading sudo... ${FG_WHITE}\n"
 	echo
 	cd $HOME
 	if [ -e termux-sudo ]; then
@@ -353,10 +361,10 @@ install_sudo_pkg () {
 	cd termux-sudo
 	chmod 777 sudo
 	mv sudo $PREFIX/bin/applets
-	printf "$gr[*]Some files have been found[*]\n"
-	printf "$ye This files:$bo "
+	printf "${FG_GREEN}[*]Some files have been found[*]\n"
+	printf "${FG_YELLOW} This files:${FG_WHITE} "
 	ls
-	printf "$be[#] Would you like to delete these files? "
+	printf "${FG_CYAN}[#] Would you like to delete these files? "
 	ask_yesnot
 	read -n 3 opc
 	case $opc in
@@ -365,12 +373,12 @@ install_sudo_pkg () {
 			cd $HOME
 			rm -rf termux-sudo
 			echo
-			printf "\n$re[!]$ye The files have been deleted.\n"
+			printf "\n$FG_RED[!]${FG_YELLOW} The files have been deleted.\n"
 			sleep 2
 			;;
 		no)
 			echo
-			printf "\n$gr[!]$ye The files have been saved.\n"
+			printf "\n${FG_GREEN}[!]${FG_YELLOW} The files have been saved.\n"
 			sleep 2
 			;;
 		*)
@@ -387,7 +395,7 @@ install_sudo_pkg () {
 install_sqlmap (){
 
 	echo $(clear)
-	printf "$gr#--wait to install sqlmap$bo\n"
+	printf "${FG_GREEN}#--wait to install sqlmap${FG_WHITE}\n"
 	echo
 	sleep 2
 	python2 -m pip install --upgrade pip
@@ -400,7 +408,7 @@ install_sqlmap (){
 install_aircrack () {
 
 	echo $(clear)
-	printf "$ye[!]-Instalando aircrack-ng...\n\n"
+	printf "${FG_YELLOW}[!]-Instalando aircrack-ng...\n\n"
 	sleep 1
 	pkg upgrade -y
 	pkg install aircrack-ng ethtool macchanger -y
@@ -415,14 +423,14 @@ choose_bash_config() {
 
 	echo $(clear)
 	printf "\n\n"
-	printf "$gr{+}--Options:
+	printf "${FG_GREEN}{+}--Options:
 		
-	$be[00]$ye Back to main menu_main
-	$be[01]$ye Config new bash
-	$be[02]$ye DexTro config\n
+	${FG_CYAN}[00]${FG_YELLOW} Back to main menu_main
+	${FG_CYAN}[01]${FG_YELLOW} Config new bash
+	${FG_CYAN}[02]${FG_YELLOW} DexTro config\n
 	"
 	#la variable original for Qconfigbash
-	printf "$gr >>$be "
+	printf "${FG_GREEN} >>${FG_CYAN} "
 	read -n 2 Opconfigbash 
 	case $Opconfigbash in
 
@@ -447,23 +455,23 @@ choose_bash_config() {
 config_bash () {
 
 	echo $(clear)
-	printf "$be[!]$ye Would you like config you console? "
+	printf "${FG_CYAN}[!]${FG_YELLOW} Would you like config you console? "
 	ask_yesnot
-	printf "\n$be"
+	printf "\n${FG_CYAN}"
 	read -n 3 Qsh
 	printf "\n"
 	case $Qsh in
 		yes)
-			printf "$bo"
+			printf "${FG_WHITE}"
 			read -p "[$]-What is your name? >> " name
-			printf "\n\n$vi[!]-Which color you wanna put on your name? \n\n"
-			printf "$bo#This [1]\n"
-			printf "$be#This [2]\n"
-			printf "$ye#This [3]\n"
-			printf "$gr#This [4]\n"
-			printf "$bs#This [5]\n"
-			printf "$re#This [6]\n"
-			printf "\n$bo[$]-input an digit >> "
+			printf "\n\n${FG_MAGENTA}[!]-Which color you wanna put on your name? \n\n"
+			printf "${FG_WHITE}#This [1]\n"
+			printf "${FG_CYAN}#This [2]\n"
+			printf "${FG_YELLOW}#This [3]\n"
+			printf "${FG_GREEN}#This [4]\n"
+			printf "${FG_BLUE}#This [5]\n"
+			printf "$FG_RED#This [6]\n"
+			printf "\n${FG_WHITE}[$]-input an digit >> "
 			read -n 3 Cname
 			echo ""
 			cd $PREFIX/etc
@@ -473,7 +481,7 @@ config_bash () {
 		;;
 	no)
 			echo $(clear)
-			printf "$re[!]$gr The config of bash haven't been configure"
+			printf "$FG_RED[!]${FG_GREEN} The config of bash haven't been configure"
 			read_enter
 			choose_bash_config
 		;;
@@ -489,7 +497,7 @@ install_metasploit () {
 
 	echo $(clear)
 	sleep 1
-	printf "$ye[!] Installing msf framework\n\n"
+	printf "${FG_YELLOW}[!] Installing msf framework\n\n"
 	sleep 1
 	pkg install unstable-repo
 	pkg install metasploit -y
@@ -502,7 +510,7 @@ install_metasploit () {
 keyboard_mod(){
 
 	echo $(clear)
-	printf "$re[!]$gr Some keys has been added please reset termux.\n\n"
+	printf "$FG_RED[!]${FG_GREEN} Some keys has been added please reset termux.\n\n"
 	read_enter
 	mkdir -p $HOME/.termux/&&echo "extra-keys = [['ESC','/','-','HOME','UP','END','PGUP'],['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]" > $HOME/.termux/termux.properties&&echo "$rst"
 	menu_main
@@ -514,13 +522,13 @@ keyboard_mod(){
 install_kickthemout() {
 
 	clear
-	printf "$ye[!] Installing kickthemount...\n\n "
+	printf "${FG_YELLOW}[!] Installing kickthemount...\n\n "
 	sleep 3
 	cd $HOME
 	git clone https://github.com/k4m4/kickthemout.git
 	if [ -e $HOME/kickthemout ]; then
 		clear
-		printf "$re[!] Error the directory kickthemout already exist."
+		printf "$FG_RED[!] Error the directory kickthemout already exist."
 		read_enter
 	else
 		cd $HOME/kickthemout
@@ -536,7 +544,7 @@ install_kickthemout() {
 
 show_error() { 
 	echo $(clear)
-	printf "$re[•]--# You have chosen an invalid option #--[•]\n\n" 
+	printf "$FG_RED[•]--# You have chosen an invalid option #--[•]\n\n" 
 	read_enter
 	menu_main
 }
@@ -584,11 +592,11 @@ show_error_8dt() {
 banner_d0() {
 
 	echo $(clear)
-	printf "${be}
+	printf "${FG_CYAN}
 	________            ________      _______ 
-	___  __ \________  ____  __/________  __ \ ${gr}
-	__  / / /  _ \_  |/_/_  /  __  ___/  / / / ${gr}
-	_  /_/ //  __/_>  < _  /   _  /   / /_/ / ${be}
+	___  __ \________  ____  __/________  __ \ ${FG_GREEN}
+	__  / / /  _ \_  |/_/_  /  __  ___/  / / / ${FG_GREEN}
+	_  /_/ //  __/_>  < _  /   _  /   / /_/ / ${FG_CYAN}
 	/_____/ \___//_/|_| /_/    /_/    \____/"
 
 }
@@ -596,21 +604,21 @@ banner_d0() {
 
 ask_yesnot() {
 
-	printf "$be["
-	printf "$ye"
-	printf "yes$be/"
-	printf "$ye"
-	printf "no$be]"
-	printf "$bo\n >> "
+	printf "${FG_CYAN}["
+	printf "${FG_YELLOW}"
+	printf "yes${FG_CYAN}/"
+	printf "${FG_YELLOW}"
+	printf "no${FG_CYAN}]"
+	printf "${FG_WHITE}\n >> "
 
-	printf "${be}[${ye}yes${be}/${ye}no${be}]$bo \n >>"
-	yesnot="${be}[${ye}yes${be}/${ye}no${be}]$bo \n >>"
+	printf "${FG_CYAN}[${FG_YELLOW}yes${FG_CYAN}/${FG_YELLOW}no${FG_CYAN}]${FG_WHITE} \n >>"
+	yesnot="${FG_CYAN}[${FG_YELLOW}yes${FG_CYAN}/${FG_YELLOW}no${FG_CYAN}]${FG_WHITE} \n >>"
 	echo "${yesnot}"
 
 }
 
 read_enter(){
-	printf "$ye[!] Press enter to continue.\n \n"
+	printf "${FG_YELLOW}[!] Press enter to continue.\n \n"
 	read -s enter
 }
 
