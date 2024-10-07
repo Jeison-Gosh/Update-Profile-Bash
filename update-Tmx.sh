@@ -15,7 +15,8 @@ co=0
 APT=apt
 PKG=pkg
 ETC=$PREFIX/etc
-NAME_CURRENT_FILE="update-Tmx.sh"
+NAME_CURRENT_FILE='update-Tmx.sh'
+NAME_WORK_DIRECTORY='TerminalUpdateBash'
 
 trap ctrl_c 2
 ctrl_c() {
@@ -33,12 +34,47 @@ ctrl_c() {
 	fi
 }
 
+#Fetch OS
+
+case "$OSTYPE" in
+	linux*)  OS="Linux" ;;
+	darwin*) OS="MacOS" ;;
+	cygwin*) OS="Cygwin" ;;
+	msys*)   OS="Windows" ;;
+	*)       OS="Desconocido" ;;
+esac
+
+ARCH=$(uname -m)
+
+echo "Operating System: $OS"
+echo "Architecture: $ARCH"
+
+if echo "$OS" | egrep -iq 'nux|ows' ; then
+	if command -v apt &>/dev/null; then
+    	PACKAGE_MANAGER="apt"
+	elif command -v apt-get &>/dev/null; then
+    	PACKAGE_MANAGER="apt-get"
+  	elif command -v yum &>/dev/null; then
+    	PACKAGE_MANAGER="yum"
+  	elif command -v pkg &>/dev/null; then
+    	PACKAGE_MANAGER="pkg"
+  	else
+		printf "${re}[!] package manager not found."
+		exit 1
+	fi
+else
+  	printf "${ye}¡Package Manager not supported for the SO!... Aborting" 
+  	exit 1
+fi
+
+printf "${re}[!]${gr}Chosen package manager: $PACKAGE_MANAGER"
+
 #check update is on home
 
 if [ -e "$NAME_CURRENT_FILE" ]; then
-	if [ -e "$HOME/Termux-update/$NAME_CURRENT_FILE" ]; then
+	if [ -e "$HOME/$NAME_WORK_DIRECTORY/$NAME_CURRENT_FILE" ]; then
 		cd $HOME
-		chmod +x "$HOME/Termux-update/$NAME_CURRENT_FILE"
+		chmod +x "$HOME/$NAME_WORK_DIRECTORY/$NAME_CURRENT_FILE"
 	elif [ -e "$HOME/$NAME_CURRENT_FILE" ]; then
 		clear
 	else
@@ -46,8 +82,8 @@ if [ -e "$NAME_CURRENT_FILE" ]; then
 		chmod +x "$HOME/$NAME_CURRENT_FILE"
 		cd "$HOME"
 	fi
-elif [ -e "$HOME/storage/downloads/Termux-update/$NAME_CURRENT_FILE" ]; then
-	mv "$HOME/storage/downloads/Termux-update/$NAME_CURRENT_FILE" $HOME
+elif [ -e "$HOME/storage/downloads/$NAME_WORK_DIRECTORY/$NAME_CURRENT_FILE" ]; then
+	mv "$HOME/storage/downloads/$NAME_WORK_DIRECTORY/$NAME_CURRENT_FILE" $HOME
 	chmod +x "$HOME/$NAME_CURRENT_FILE" 
 else 
 	echo $(clear)
@@ -61,7 +97,9 @@ else
 	printf "$re.$bo\n\n"
 	exit 0
 fi
+
 #menu_main principal
+
 menu_main() {
 
 	echo $(clear)
@@ -85,16 +123,8 @@ menu_main() {
 	case $op in
 
 		00)
-			echo $(clear)
-			printf "$ye[!]$be Script made by DexTr0\n\n$ye©DexTrø"
-			sleep 1
-			printf "$ye."
-			sleep 1
-			printf "$ye."
-			sleep 1
-			printf "$ye.\n\n"
-			sleep 1
-			exit
+			water_mark_author
+			exit 0
 			;;
 		01) 
 			update
@@ -109,7 +139,7 @@ menu_main() {
 			install_sudo_pkg
 			;;
 		05)
-			kickthemout
+			install_kickthemout
 			;;
 		06)
 			install_aircrack
@@ -464,7 +494,7 @@ keyboard_mod(){
 
 #Wifi admin/MAC spoof
 
-kickthemout() {
+install_kickthemout() {
 
 	clear
 	printf "$ye[!] Installing kickthemount...\n\n "
@@ -560,14 +590,6 @@ bannerD0() {
 
 }
 
-check_word() {
-    if grep -qi "$1" archivo.txt; then|
-        return 0  # true
-    else
-        return 1  # false
-    fi
-}
-
 #Question opt [yes/no]
 
 ask_yesnot() {
@@ -579,5 +601,22 @@ ask_yesnot() {
 	printf "no$be]"
 	printf "$bo\n >> "
 
+	printf "${be}[${ye}yes${be}/${ye}no${be}]$bo \n >>"
+	yesnot="${be}[${ye}yes${be}/${ye}no${be}]$bo \n >>"
+	echo "${yesnot}"
+
 }
+
+water_mark_author(){
+	echo $(clear)
+	printf "$ye[!]$be Script made by DexTr0\n\n$ye©DexTrø"
+	sleep 1
+	printf "$ye."
+	sleep 1
+	printf "$ye."
+	sleep 1
+	printf "$ye.\n\n"
+	sleep 1
+}
+
 menu_main
