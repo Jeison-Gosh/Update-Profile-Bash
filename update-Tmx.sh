@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/bin/bash
 
 bse='\033[2;94m'
 bo='\033[1;97m'
@@ -18,6 +18,22 @@ ETC=$PREFIX/etc
 NAME_CURRENT_FILE='update-Tmx.sh'
 NAME_WORK_DIRECTORY='TerminalUpdateBash'
 
+water_mark_author(){
+	local sleeptime=${1:-3}  
+	sleep $sleeptime
+	echo $(clear)
+    printf "${ye}[!]${be}Script made by DexTr0\n\n ${ye}Script is closing now. Please wait\n\n"
+    printf "${ye}©This software is copyleft and licensed under the GNU Affero General Public License\n
+	${ye} For more information,\n visit https://www.gnu.org/licenses/agpl-3.0.html\n\n"
+	sleep 1
+    printf "${ye}."
+    sleep 1
+    printf "${ye}."
+    sleep 1
+    printf "${ye}.\n\n"
+    sleep 1
+}
+
 trap ctrl_c 2
 ctrl_c() {
 	co=$(($co + 1))
@@ -25,11 +41,11 @@ ctrl_c() {
 	if [ $co == 3 ]; then # Check if press tree times ctrl_c
 		sleep 1
 		echo $(clear)
-		printf "$re[!] An error has been found.\n"
+		printf "${re}[!] An error has been found.\n"
 		echo
 		sleep 1
-		printf "$ye#The script has finished...\n"
-		echo
+		printf "${ye}#The script has finished...\n"
+		water_mark_author 2
 		exit 0
 	fi
 }
@@ -49,7 +65,19 @@ ARCH=$(uname -m)
 echo "Operating System: $OS"
 echo "Architecture: $ARCH"
 
-if echo "$OS" | egrep -iq 'nux|ows' ; then
+# Check that OS environment exists
+
+if [[ -z "$OS" ]]; then 
+	printf "${re}[!]${ye} OS var environment is not defined... Trying with var OSTYPE\n" 
+fi 
+
+if [[ -z "$OSTYPE" ]]; then 
+	printf "${re}[!]${ye} OSTYPE var environment is not defined... Aborting\n"
+	water_mark_author
+	exit 1 
+fi
+
+if echo $OS | egrep -iq 'nux|ows' ; then
 	if command -v apt &>/dev/null; then
     	PACKAGE_MANAGER="apt"
 	elif command -v apt-get &>/dev/null; then
@@ -59,12 +87,14 @@ if echo "$OS" | egrep -iq 'nux|ows' ; then
   	elif command -v pkg &>/dev/null; then
     	PACKAGE_MANAGER="pkg"
   	else
-		printf "${re}[!] package manager not found."
+		printf "${re}[!] Package manager not found."
+		water_mark_author
 		exit 1
 	fi
 else
-  	printf "${ye}¡Package Manager not supported for the SO!... Aborting" 
-  	exit 1
+	printf "${ye}¡Package Manager not supported for the SO!... Aborting\n" 
+	water_mark_author
+	exit 1
 fi
 
 printf "${re}[!]${gr}Chosen package manager: $PACKAGE_MANAGER"
@@ -87,23 +117,17 @@ elif [ -e "$HOME/storage/downloads/$NAME_WORK_DIRECTORY/$NAME_CURRENT_FILE" ]; t
 	chmod +x "$HOME/$NAME_CURRENT_FILE" 
 else 
 	echo $(clear)
-	printf "$ye#Please move the *$NAME_CURRENT_FILE* file to home directory.\n\n"
-	sleep 2
-	printf "$re[!] The script has been closed"
-	printf "$re."
-	sleep 1
-	printf "$re."
-	sleep 1
-	printf "$re.$bo\n\n"
+	printf "${ye}#Please move the *$NAME_CURRENT_FILE* file to home directory.\n\n"
+	water_mark_author 2
 	exit 0
 fi
 
-#menu_main principal
+# Main Menu
 
 menu_main() {
 
 	echo $(clear)
-	bannerD0
+	banner_d0
 	echo
 	echo
 	printf "$gr{+}--Options:
@@ -254,10 +278,7 @@ config_environment_by_default() {
 		mkdir /storage/emulated/0/LabDTest
 		printf "$be#--Has been made (LabDTest) directory.\n\n"
 	fi
-
-	printf "$ye[!] Press enter to continue.\n\n"
-	read -s enter
-		
+	read_enter	
 	menu_main
 }
 
@@ -301,12 +322,10 @@ delete_thumbnails () {
 	if [ -d .thumbnails ]; then
 		rm -rf .thumbnails/
 		printf "$be#Thumbnails directory has been removed.\n\n"
-		printf "$ye[!] Press enter to continue.\n \n"
-		read -s enter
+		read_enter
 	else
 		printf "$re[!] The thumbnails appears to have been removed.\n\n"
-		printf "$ye[!] Press enter to continue. "
-		read -s enter
+		read_enter
 	fi
 }
 
@@ -455,8 +474,7 @@ config_bash () {
 	no)
 			echo $(clear)
 			printf "$re[!]$gr The config of bash haven't been configure"
-			printf "\n\n$ye[!] Press enter to continue.\n\n"
-			read -s enter
+			read_enter
 			choose_bash_config
 		;;
 	*)
@@ -485,8 +503,7 @@ keyboard_mod(){
 
 	echo $(clear)
 	printf "$re[!]$gr Some keys has been added please reset termux.\n\n"
-	printf "$ye[!] Press enter to continue. "
-	read -s enter
+	read_enter
 	mkdir -p $HOME/.termux/&&echo "extra-keys = [['ESC','/','-','HOME','UP','END','PGUP'],['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]" > $HOME/.termux/termux.properties&&echo "$rst"
 	menu_main
 
@@ -504,8 +521,7 @@ install_kickthemout() {
 	if [ -e $HOME/kickthemout ]; then
 		clear
 		printf "$re[!] Error the directory kickthemout already exist."
-		printf "\n\n$ye[!] Press enter to continue."
-		read -s enter
+		read_enter
 	else
 		cd $HOME/kickthemout
 		python -m pip install -r requirements.txt
@@ -521,8 +537,7 @@ install_kickthemout() {
 show_error() { 
 	echo $(clear)
 	printf "$re[•]--# You have chosen an invalid option #--[•]\n\n" 
-	printf "$ye[!] Press enter to continue. "
-	read -s enter
+	read_enter
 	menu_main
 }
 
@@ -566,30 +581,17 @@ show_error_8dt() {
 
 #DexTr0 banner
 
-bannerD0() {
+banner_d0() {
 
 	echo $(clear)
-	printf "$be"
-	
-	printf '
+	printf "${be}
 	________            ________      _______ 
-	___  __ \________  ____  __/________  __ \'
-	printf "$gr"
-
-	printf '
-	__  / / /  _ \_  |/_/_  /  __  ___/  / / /'
-	printf "$gr"
-	printf '
-	_  /_/ //  __/_>  < _  /   _  /   / /_/ /'
-
-	printf "$bs"
-	printf '
-	/_____/ \___//_/|_| /_/    /_/    \____/'  
-
-
+	___  __ \________  ____  __/________  __ \ ${gr}
+	__  / / /  _ \_  |/_/_  /  __  ___/  / / / ${gr}
+	_  /_/ //  __/_>  < _  /   _  /   / /_/ / ${be}
+	/_____/ \___//_/|_| /_/    /_/    \____/"
 
 }
-
 #Question opt [yes/no]
 
 ask_yesnot() {
@@ -607,16 +609,9 @@ ask_yesnot() {
 
 }
 
-water_mark_author(){
-	echo $(clear)
-	printf "$ye[!]$be Script made by DexTr0\n\n$ye©DexTrø"
-	sleep 1
-	printf "$ye."
-	sleep 1
-	printf "$ye."
-	sleep 1
-	printf "$ye.\n\n"
-	sleep 1
+read_enter(){
+	printf "$ye[!] Press enter to continue.\n \n"
+	read -s enter
 }
 
 menu_main
