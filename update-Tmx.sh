@@ -237,17 +237,18 @@ menu_main() {
 update_terminal() {
 
 	echo $(clear)
-	printf "${ANSI_BG_YELLOW}[!] Searching package manager for OS: ${OS}\n"
-	printf "${ANSI_BG_YELLOW}${ANSI_FG_WHITE}--Loading packages...${ANSI_RESET}\n" 
+	printf "${ANSI_RESET}${ANSI_FG_YELLOW}[!] Searching package manager for OS: ${OS}\n\n"
+	printf "${ANSI_BG_YELLOW}${ANSI_FG_WHITE}#--Loading packages...${ANSI_RESET}\n" 
 	sleep 1
 	cd $HOME
-	printf "${ANSI_FG_YELLOW}"
-	$package_manager update -y && $package_manager upgrade -y || \
 	sudo $package_manager update -y && sudo $package_manager upgrade -y || \
+	$package_manager update -y && $package_manager upgrade -y || \
 	show_message_error_package_manager "update packages"
-	
-	$package_manager install vim figlet git wget curl php python python2 perl nmap openssh unzip zip unrar hydra util-linux darkhttpd tor torsocks clang -y || \
-	sudo $package_manager install vim figlet git wget curl php python python2 perl nmap openssh unzip zip unrar hydra util-linux darkhttpd tor torsocks clang -y || \
+
+	printf "${ANSI_FG_YELLOW}[!] Trying install tools.\n\n ${ANSI_RESET}" 
+
+	sudo $package_manager install vim figlet git wget nmap openssh unzip zip unrar hydra util-linux darkhttpd tor torsocks clang || \
+	$package_manager install vim figlet git wget nmap openssh unzip zip unrar hydra util-linux darkhttpd tor torsocks clang || \
 	show_message_error_package_manager "install packages" 1
 	
 	update_terminal_as_root
@@ -270,11 +271,9 @@ update_terminal_as_root() {
 			sudo $package_manager update -y
 			sudo $package_manager upgrade -y
 			sleep 1
-			menu_main
 			;;
 		no)
 			printf "${ANSI_FG_WHITE}\n"
-			menu_main
 			;;
 		*)
 			show_error1rp
@@ -321,13 +320,12 @@ config_environment_by_default() {
 	echo "LABD=$HOME/storage/shared/LabDTest" >> $ETC/bash.bashrc
 	echo "labd=/storage/emulated/0/LabDTest" >> $ETC/bash.bashrc
 	if [ -e /storage/emulated/0/LabDTest ]; then
-		printf "${ANSI_FG_RED}[!]${ANSI_FG_GREEN} Alread exists the directory (LabDTest).\n\n"
+		printf "${ANSI_FG_RED}[!]${ANSI_FG_GREEN} Alread exists the directory (LabDTest)"
 	else
 		mkdir /storage/emulated/0/LabDTest
-		printf "${ANSI_FG_CYAN}#--Has been made (LabDTest) directory.\n\n"
+		printf "${ANSI_FG_CYAN}#--Has been made (LabDTest) directory"
 	fi
 	read_enter	
-	menu_main
 }
 
 # Menu dell thumb
@@ -346,7 +344,7 @@ menu_dellthum(){
 	read -n 2 answ
 	case $answ in
 		00)
-			menu_main
+			printf "Done..."
 			;;
 		01)
 			delete_thumbnails
@@ -359,7 +357,6 @@ menu_dellthum(){
 			;;
 
 	esac
-	menu_main
 }
 
 #delete thumbnails
@@ -371,12 +368,11 @@ delete_thumbnails () {
 	cd /storage/emulated/0/DCIM
 	if [ -d .thumbnails ]; then
 		rm -rf .thumbnails/
-		printf "${ANSI_FG_CYAN}#Thumbnails directory has been removed.\n\n"
-		read_enter
+		printf "${ANSI_FG_CYAN}#Thumbnails directory has been removed."
 	else
-		printf "${ANSI_FG_RED}[!] The thumbnails appears to have been removed.\n\n"
-		read_enter
+		printf "${ANSI_FG_RED}[!] The thumbnails appears to have been removed."
 	fi
+	read_enter
 }
 
 #sudo
@@ -425,8 +421,6 @@ install_sudo_pkg () {
 			;;
 
 	esac
-	menu_main
-	
 }
 
 #sqlmap
@@ -438,7 +432,6 @@ install_sqlmap (){
 	sleep 2
 	python2 -m pip install --upgrade pip
 	python2 -m pip install sqlmap
-	menu_main
 }
 
 #Aircrack
@@ -450,7 +443,6 @@ install_aircrack () {
 	sleep 1
 	$package_manager install aircrack-ng ethtool macchanger -y || \
 	show_message_error_package_manager "aircrack-ng"
-	menu_main
 }
 
 
@@ -462,17 +454,17 @@ choose_bash_config() {
 	printf "\n\n"
 	printf "${ANSI_FG_GREEN}{+}--Options:
 		
-	${ANSI_FG_CYAN}[00]${ANSI_FG_YELLOW} Back to main menu_main
+	${ANSI_FG_CYAN}[00]${ANSI_FG_YELLOW} Back to main menu
 	${ANSI_FG_CYAN}[01]${ANSI_FG_YELLOW} Config new bash
 	${ANSI_FG_CYAN}[02]${ANSI_FG_YELLOW} DexTro config\n
 	"
 	#la variable original for Qconfigbash
 	printf "${ANSI_FG_GREEN} >>${ANSI_FG_CYAN} "
-	read -n 2 Opconfigbash 
-	case $Opconfigbash in
+	read -n 2 answ 
+	case $answ in
 
 		00)
-			menu_main
+			printf "Done..."
 			;;
 		01)
 			config_bash
@@ -508,7 +500,7 @@ config_bash () {
 			printf "${ANSI_FG_BLUE}#This [5]\n"
 			printf "${ANSI_FG_RED}#This [6]\n"
 			printf "\n${ANSI_FG_WHITE}[$]-input an digit >> "
-			read -n 3 Cname
+			read -n 3 bash_name
 			echo ""
 			cd $PREFIX/etc
 			if [ -e bash.bashrc ]; then
@@ -517,7 +509,7 @@ config_bash () {
 		;;
 	no)
 			echo $(clear)
-			printf "${ANSI_FG_RED}[!]${ANSI_FG_GREEN} The config of bash haven't been configure"
+			printf "${ANSI_FG_RED}[!]${ANSI_FG_GREEN} The config of bash haven't been configure."
 			read_enter
 			choose_bash_config
 		;;
@@ -532,13 +524,10 @@ config_bash () {
 install_metasploit () {
 
 	echo $(clear)
-	sleep 1
 	printf "${ANSI_FG_YELLOW}[!] Installing msf framework\n\n"
 	sleep 1
-	pkg install unstable-repo
-	pkg install metasploit -y
+	$package_manager install unstable-repo metasploit -y
 	sleep 3
-	menu_main
 }
 
 #keyboard changue
@@ -546,10 +535,9 @@ install_metasploit () {
 keyboard_mod(){
 
 	echo $(clear)
-	printf "${ANSI_FG_RED}[!]${ANSI_FG_GREEN} Some keys has been added please reset terminal.\n\n"
+	printf "${ANSI_FG_RED}[!]${ANSI_FG_GREEN} Some keys has been added please reset terminal."
 	read_enter
 	mkdir -p $HOME/.termux/&&echo "extra-keys = [['ESC','/','-','HOME','UP','END','PGUP'],['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]" > $HOME/.termux/termux.properties&&echo "$rst"
-	menu_main
 
 }
 
@@ -563,23 +551,19 @@ install_kickthemout() {
 	cd $HOME
 	git clone https://github.com/k4m4/kickthemout.git
 	if [ -e $HOME/kickthemout ]; then
-		printf "${ANSI_FG_RED}[!] Error the directory kickthemout already exist."
+		printf "${ANSI_FG_RED}[!] Error the directory kickthemout already exists."
 		read_enter
 	else
 		cd $HOME/kickthemout
 		python -m pip install -r requirements.txt
 	fi
-	menu_main
-
-	
-
 }
 
 # Error case
 
 show_error() { 
 	echo $(clear)
-	printf "${ANSI_BG_BLACK}${ANSI_FG_RED}[•]--# You have chosen an invalid option #--[•]\n\n${ANSI_RESET}" 
+	printf "${ANSI_BG_BLACK}${ANSI_FG_RED}[•]--# You have chosen an invalid option #--[•]" 
 	read_enter
 }
 
@@ -638,9 +622,9 @@ show_banner_dextro() {
 # show error message with chosen package manager
 
 show_message_error_package_manager(){
-	local message=${1: "update the packages"}
+	local message=${1:-"update the packages"}
 	local sleeptime=${2:-2}
-	printf "${ANSI_FG_RED}[!] Failed to $1 with the package manager: ${package_manager}.${ANSI_RESET}"
+	printf "${ANSI_FG_RED}[!] Failed to $1 with the package manager: ${package_manager}.${ANSI_RESET}\n\n"
 	sleep $sleeptime
 }
 
@@ -651,7 +635,7 @@ ask_yesnot() {
 }
 
 read_enter(){
-	printf "${ANSI_RESET}${ANSI_FG_YELLOW}[!] Press enter to continue.\n\n${ANSI_RESET}"
+	printf "${ANSI_RESET}\n\n${ANSI_FG_YELLOW}[!] Press enter to continue.\n\n${ANSI_RESET}"
 	read -s enter
 }
 
