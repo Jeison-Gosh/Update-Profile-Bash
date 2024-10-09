@@ -57,7 +57,7 @@ debug_log() {
 }
 
 exit_water_mark_author(){
-	local sleeptime=${1:-3}
+	local sleeptime=${1:-0}
 	local codeexit=${2:-0} 
 	#debug_log sleeptime codeexit
 	sleep $sleeptime
@@ -626,13 +626,13 @@ show_error_8dt() {
 show_banner_dextro() {
 
 	echo $(clear)
-	printf "${ANSI_FG_CYAN}
-	________            ________      _______ 
-	___  __ \________  ____  __/________  __ \ ${ANSI_FG_GREEN}
-	__  / / /  _ \_  |/_/_  /  __  ___/  / / / ${ANSI_FG_GREEN}
-	_  /_/ //  __/_>  < _  /   _  /   / /_/ / ${ANSI_FG_CYAN}
-	/_____/ \___//_/|_| /_/    /_/    \____/"
-
+	printf "${ANSI_BG_BLACK}${ANSI_FG_CYAN}
+	 ________          _____________ _____  ${ANSI_BG_BLACK}${ANSI_FG_GREEN}
+	 ___  __ \______   ___ _  _/___ \  __ \ ${ANSI_BG_BLACK}${ANSI_FG_GREEN}
+	 __  / / /  __\_\-/_/ // /- /_/ / / / / ${ANSI_BG_BLACK}${ANSI_FG_GREEN}
+	 _  /_/ //  __/_> <__// /- _,_ / /_/ /  ${ANSI_BG_BLACK}${ANSI_FG_CYAN}
+	 /_____/ \___//_/-\_\/_/_//_/|_|\___/   ${ANSI_BG_BLACK}
+	                                        ${ANSI_RESET}"
 }
 
 # show error message with chosen package manager
