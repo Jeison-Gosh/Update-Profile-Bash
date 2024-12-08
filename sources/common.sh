@@ -56,21 +56,16 @@ show_message_error(){
 		printf "\n\n"
 	fi
 }
+ 
+# Checks
+check_command_exists() {
+  command -v "$1" > /dev/null 2>&1 && echo "$1" && return 0
+  return 1
+}
 
-exit_water_mark_author(){
-	local sleeptime=${1:-0}
-	local codeexit=${2:-0}
-	exitcount=-1
-	stty -echo icanon time 0 min 0
-	sleep $sleeptime && clear
-    printf "${ANSI_BG_BLACK}${ANSI_FG_RED}[•]--# Script is closing now. Please wait. #--[•]\n\n${ANSI_RESET}${ANSI_FG_WHITE}[!] Script made by DexTr0${ANSI_RESET}\n\n"
-	sleep 1
-    printf "${ANSI_FG_YELLOW}█████████" && sleep 1
-    printf "\n${ANSI_FG_BLUE}█████████" &&sleep 1
-    printf "\n${ANSI_FG_RED}█████████"  && sleep 1
-    printf "\n\n${ANSI_BG_BLACK}${ANSI_FG_YELLOW}© This software is copyleft and licensed under the GNU Affero General Public License.\nFor more information, visit "
-	printf 'https://www.gnu.org/licenses/agpl-3.0.html'
-	printf "${ANSI_RESET}\n\n"
-	stty echo icanon
-	exit $codeexit
+# Reads
+
+read_enter(){
+	printf "${ANSI_RESET}\n\n${ANSI_FG_YELLOW}[!] Press enter to continue.\n\n${ANSI_RESET}"
+	read -s enter
 }
